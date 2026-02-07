@@ -3,14 +3,15 @@
 import { useState } from "react";
 
 export default function Home() {
+  const [key, setKey] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [resultUrl, setResultUrl] = useState<string | null>(null);
 
   const handleSubmit = async () => {
-    if (!image || !message) {
-      alert("Please upload an image and enter a message");
+    if (!image || !message || !key) {
+      alert("Please upload an image, enter a message, and a secret key");
       return;
     }
 
@@ -19,6 +20,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append("image", image);
     formData.append("message", message);
+    formData.append("key", key);
 
     const res = await fetch("/api/embed", {
       method: "POST",
@@ -50,6 +52,14 @@ export default function Home() {
           placeholder="Enter secret message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          className="w-full border p-2 mb-3"
+        />
+
+        <input
+          type="text"
+          placeholder="Secret Key (same for extract)"
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
           className="w-full border p-2 mb-3"
         />
 

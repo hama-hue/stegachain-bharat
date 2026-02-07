@@ -1,22 +1,24 @@
 import crypto from "crypto";
 
+const ALGO = "aes-256-cbc";
+
+function deriveKey(password: string) {
+  return crypto.createHash("sha256").update(password).digest();
+}
+
 export function decryptData(
-  encrypted: Buffer,
-  key: string
+  encryptedHex: string,
+  password: string,
+  ivHex: string
 ): string {
-  const iv = encrypted.subarray(0, 16);
-  const content = encrypted.subarray(16);
+  const key = deriveKey(password);
+  const iv = Buffer.from(ivHex, "hex");
+  const encrypted = Buffer.from(encryptedHex, "hex");
 
-  const decipher = crypto.createDecipheriv(
-    "aes-256-cbc",
-    Buffer.from(key, "hex"),
-    iv
-  );
+  const decipher = crypto.createDecipheriv(ALGO, key, iv);
 
-  const decrypted = Buffer.concat([
-    decipher.update(content),
-    decipher.final(),
-  ]);
+  let decrypted = decipher.update(encrypted, undefined, "utf8");
+  decrypted += decipher.final("utf8");
 
-  return decrypted.toString("utf-8");
+  return decrypted;
 }
