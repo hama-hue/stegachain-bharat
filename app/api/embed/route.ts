@@ -17,10 +17,11 @@ export async function POST(req: Request) {
   const payload = JSON.stringify({ encrypted, iv });
   const stegoImage = await embedMessage(buffer, payload);
 
-  return new Response(stegoImage, {
+    return new Response(new Uint8Array(stegoImage), {
     headers: {
-      "Content-Type": "image/png",
-      "X-ENCRYPTION-KEY": key, // demo-only
+        "Content-Type": "image/png",
+        "X-ENCRYPTION-KEY": key, // demo-only
     },
-  });
+    });
+
 }
