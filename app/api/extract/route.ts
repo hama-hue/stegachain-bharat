@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { extractFromImage } from "@/lib/stego/extract";
-import { decryptData } from "@/lib/stego/decrypt";
+import { decryptMessage } from "@/lib/crypto";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,11 +17,10 @@ export async function POST(req: NextRequest) {
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    // 1️⃣ Extract raw encrypted bytes
     const extracted = await extractFromImage(buffer);
+    const { encrypted, iv } = JSON.parse(extracted.toString());
 
-    // 2️⃣ Decrypt message
-    const message = decryptData(extracted, key);
+    const message = decryptMessage(encrypted, key, iv);
 
     return Response.json({
       success: true,
