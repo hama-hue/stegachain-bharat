@@ -9,28 +9,44 @@ export async function POST(req: NextRequest) {
     const key = formData.get("key") as string | null;
 
     if (!file || !key) {
-      return new Response(
-        JSON.stringify({ error: "Image and key required" }),
+      return Response.json(
+        { error: "Image and key required" },
         { status: 400 }
       );
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    // 1️⃣ Extract raw bytes from image
     const extracted = await extractFromImage(buffer);
-    const { encrypted, iv } = JSON.parse(extracted.toString());
 
-    const message = decryptMessage(encrypted, key, iv);
+    // 2️⃣ Read payload length
+    const payloadLength = extracted.readUInt32BE(0);
+
+    // 3️⃣ Extract ONLY payload
+    const payloadBuffer = extracted.slice(4, 4 + payloadLength);
+
+    // 4️⃣ Decode JSON
+    const payload = JSON.parse(payloadBuffer.toString("utf8"));
+
+    // 5️⃣ Decrypt
+    const message = decryptMessage(
+      payload.encrypted,
+      key,
+      payload.iv
+    );
 
     return Response.json({
       success: true,
       message,
     });
+
   } catch (err) {
     console.error(err);
-    return new Response(
-      JSON.stringify({ error: "Extraction failed" }),
+    return Response.json(
+      { error: "Extraction failed" },
       { status: 500 }
     );
   }
 }
+
