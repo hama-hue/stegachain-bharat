@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">
+        <h1 className="text-2xl font-bold mb-4 text-center text-gray-900">
           StegaChain Bharat 🇮🇳
         </h1>
 
@@ -45,14 +45,14 @@ export default function Home() {
           type="file"
           accept="image/*"
           onChange={(e) => setImage(e.target.files?.[0] || null)}
-          className="mb-3"
+          className="mb-3 w-full text-gray-900"
         />
 
         <textarea
           placeholder="Enter secret message"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          className="w-full border p-2 mb-3"
+          className="w-full border p-2 mb-3 text-gray-900 placeholder-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
         <input
@@ -60,13 +60,13 @@ export default function Home() {
           placeholder="Secret Key (same for extract)"
           value={key}
           onChange={(e) => setKey(e.target.value)}
-          className="w-full border p-2 mb-3"
+          className="w-full border p-2 mb-3 text-gray-900 placeholder-gray-500 rounded focus:outline-none focus:ring-2 focus:ring-blue-400"
         />
 
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="w-full bg-black text-white py-2 rounded"
+          className="w-full bg-black text-white py-2 rounded hover:bg-gray-800 transition-colors"
         >
           {loading ? "Processing..." : "Embed Message"}
         </button>
